@@ -326,6 +326,20 @@ making the code cleaner and easier to maintain.
 
 ## Basic Structure of Exception Handling in C++
 C++ uses three primary keywords for exception handling:
-- **try**: 
+- **throw**: 
     * When an error occurs, you can "throw" an exception to signal that something went wrong. This is done using the throw keyword.
+    * This keyword is used to signal that an exception has occurred.
+- **try**: 
+    * When an exception is thrown, you can "catch" it and handle it using a try-catch block. The try block contains the code that may throw an exception, and the catch block contains the code that handles the exception.
     * This block contains the code that might throw an exception.
+- **catch**: 
+    * This block catches and handles the exception.
+
+You can throw exceptions of any type, but it's common to throw objects of standard 
+types like std::exception or derived classes, such as std::runtime_error.
+
+### Syntax
+1. **Throwing an Exception**: 
+```C++
+throw exceptionObject;
+```
