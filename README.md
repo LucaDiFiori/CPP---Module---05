@@ -16,6 +16,7 @@ This module is designed to help you understand Try/Catch and Exceptions in CPP.
     - [Inheritance and Nested Classes](#inheritance-and-nested-classes)
 - [EXCEPTIONS AND TRY/CATCH STATEMENTS](#exceptions-and-trycatch-statements)
     - [Basic Structure of Exception Handling in C++](#basic-structure-of-exception-handling-in-c)
+    - [Syntax](#syntax)
 
 ***
 
@@ -338,8 +339,75 @@ C++ uses three primary keywords for exception handling:
 You can throw exceptions of any type, but it's common to throw objects of standard 
 types like std::exception or derived classes, such as std::runtime_error.
 
-### Syntax
+## Syntax
 1. **Throwing an Exception**: 
     ```C++
     throw exceptionObject;
     ```
+2. **Try-Catch Block**:
+    ```C++
+    try {
+        // Code that might throw an exception
+    } catch (exceptionType& ex) {
+        // Code to handle the exception
+    }
+    ```
+
+### Examples
+1. **Example**
+    ```C++
+    #include <iostream>
+
+    int main() {
+        try {
+            // Code that may throw an exception
+            throw 20;  // Throwing an integer exception
+        }
+        catch (int e) {
+            // Code to handle the exception
+            std::cout << "Caught an exception with value: " << e << std::endl;
+        }
+
+        return 0;
+    }
+    ```
+    - **try block**: It contains the code that could potentially cause an error.
+    - **throw statement**: This signals that an exception has occurred. The throw keyword can pass any type of data (in this case, an integer 20).
+    - **catch block**: It catches the exception. **The parameter inside the catch block must match the type of the thrown object** (in this case, int).
+
+2. **Example**
+    ```C++
+    #include <iostream>
+    #include <stdexcept>  // For standard exceptions
+
+    int divide(int a, int b) {
+        if (b == 0) {
+            throw std::runtime_error("Division by zero!");
+        }
+        return a / b;
+    }
+
+    int main() {
+        int x = 10, y = 0;
+        
+        try {
+            // This will throw a runtime_error because y is zero
+            int result = divide(x, y);
+            std::cout << "Result: " << result << std::endl;
+        } catch (const std::runtime_error& e) {
+            // Handle the exception by printing the error message
+            std::cerr << "Error: " << e.what() << std::endl;
+        }
+
+        // Program continues here after the catch block (unless it's explicitly terminated)
+        return 0;  // Normal exit
+    }
+    ```
+    - divide is a function that checks if the denominator (b) is zero. If it is, the function throws a std::runtime_error exception.
+    - In main(), the try block contains the code that might throw an exception (divide(x, y)), and the catch block handles any exceptions that occur, printing an error message.
+    - **std::runtime_error** is a specific type of exception provided by the C++ Standard Library. 
+    It is used to represent runtime errors (like division by zero in your case).
+    - The **& e** part means that e is a reference to the std::runtime_error object that was thrown. 
+    This allows you to inspect the details of the exception (in this case, the error message).
+    - The **what()** function is a member function of the std::runtime_error class (inherited from std::exception), 
+    and it returns a C-style string (const char*) that describes the error. In this case, it returns the message "Division by zero!"
