@@ -497,10 +497,10 @@ int main() {
 Here, a std::string exception is thrown, and the appropriate catch block that handles 
 std::string catches it.
 
-```
-Questo è un testo racchiuso in un blocco di codice.
-Non è esattamente una box, ma funziona.
-```
+
+<Questo è un testo racchiuso in un blocco di codice.
+Non è esattamente una box, ma funziona.>
+
 
 
 ## 
