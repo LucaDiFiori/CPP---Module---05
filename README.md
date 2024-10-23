@@ -20,6 +20,10 @@ This module is designed to help you understand Try/Catch and Exceptions in CPP.
     - [Examples](#examples)
     - [How Exception Handling Works](#how-exception-handling-works)
     - [Types of Exceptions](#types-of-exceptions)
+    - [Throwing Standard Exception](#throwing-standard-exceptions)
+    - [Catching All Exceptions](#catching-all-exceptions)
+    - [Rethrowing Exceptions](#Rethrowing-Exceptions)
+    - [Custom Exception Classes](#custom-exception-classes)
 
 ***
 
@@ -497,9 +501,65 @@ int main() {
 Here, a std::string exception is thrown, and the appropriate catch block that handles 
 std::string catches it.
 
+## Throwing Standard Exceptions
+C++ provides a set of standard exceptions in the **<stdexcept>** header file. 
+These are predefined classes that can be used for various common error conditions. 
+Some common standard exceptions include:
 
-> Questo è un testo racchiuso in un blocco di codice.
+- **std::exception**: The base class for all standard exceptions.
+- **std::runtime_error**: Thrown for runtime errors.
+- **std::out_of_range**: Thrown when a container is accessed out of bounds.
+- **std::invalid_argument**: Thrown when an invalid argument is provided to a function.
 
+## Catching All Exceptions
+You can catch all exceptions, regardless of their type, by using an ellipsis **(...)** 
+in the catch block. This is useful if you want a generic handler for unexpected exceptions.
+```C++
+#include <iostream>
 
+int main() {
+    try {
+        throw 1.5;  // Throwing a double exception
+    }
+    catch (...) {
+        std::cout << "Caught an exception of unknown type." << std::endl;
+    }
 
-## 
+    return 0;
+}
+```
+This will catch any thrown exception, but it won't provide the details of what exactly was thrown.
+
+## Rethrowing Exceptions
+You can rethrow an exception in a catch block if you want to handle it partially 
+and pass it on for further handling.
+```C++
+#include <iostream>
+
+void function() {
+    try {
+        throw std::runtime_error("Error in function");
+    }
+    catch (...) {
+        std::cout << "Caught in function, rethrowing..." << std::endl;
+        throw;  // Rethrow the current exception
+    }
+}
+
+int main() {
+    try {
+        function();
+    }
+    catch (const std::runtime_error& e) {
+        std::cout << "Caught in main: " << e.what() << std::endl;
+    }
+
+    return 0;
+}
+```
+Here, the exception is caught in the function() and rethrown to be handled by the main() function.
+
+## Custom Exception Classes
+1. **inheriting from std::exception**
+You can create your own exception classes by inheriting from std::exception 
+or other standard exception types.
