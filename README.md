@@ -14,6 +14,9 @@ This module is designed to help you understand Try/Catch and Exceptions in CPP.
     - [Static Nested Classes](#static-nested-classes)
     - [Protected and Private Nested Classes](#protected-and-private-nested-classes)
     - [Inheritance and Nested Classes](#inheritance-and-nested-classes)
+- [EXCEPTIONS AND TRY/CATCH STATEMENTS](#exceptions-and-trycatch-statements)
+    - [Basic Structure of Exception Handling in C++](#basic-structure-of-exception-handling-in-c)
+
 ***
 
 # C++ BASICS 05
@@ -309,4 +312,20 @@ int main() {
     return 0;
 }
 ```
-Here, DerivedInner inherits from the nested Inner class of Outer, allowing you to extend the functionality of the nested class through inheritance.
+Here, DerivedInner inherits from the nested Inner class of Outer, allowing you 
+to extend the functionality of the nested class through inheritance.
+
+***
+***
+
+# EXCEPTIONS AND TRY/CATCH STATEMENTS
+Exceptions in C++ are a mechanism that allows you to handle errors or unexpected 
+conditions that occur during the execution of a program. Instead of relying on error 
+codes or return values, exceptions provide a structured way to handle these errors, 
+making the code cleaner and easier to maintain.
+
+## Basic Structure of Exception Handling in C++
+C++ uses three primary keywords for exception handling:
+- **try**: 
+    * When an error occurs, you can "throw" an exception to signal that something went wrong. This is done using the throw keyword.
+    * This block contains the code that might throw an exception.
