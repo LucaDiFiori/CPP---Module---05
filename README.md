@@ -340,6 +340,6 @@ types like std::exception or derived classes, such as std::runtime_error.
 
 ### Syntax
 1. **Throwing an Exception**: 
-```C++
-throw exceptionObject;
-```
+    ```C++
+    throw exceptionObject;
+    ```
