@@ -17,6 +17,9 @@ This module is designed to help you understand Try/Catch and Exceptions in CPP.
 - [EXCEPTIONS AND TRY/CATCH STATEMENTS](#exceptions-and-trycatch-statements)
     - [Basic Structure of Exception Handling in C++](#basic-structure-of-exception-handling-in-c)
     - [Syntax](#syntax)
+    - [Examples](#examples)
+    - [How Exception Handling Works](#how-exception-handling-works)
+    - [Types of Exceptions](#types-of-exceptions)
 
 ***
 
@@ -353,7 +356,7 @@ types like std::exception or derived classes, such as std::runtime_error.
     }
     ```
 
-### Examples
+## Examples
 1. **Example**
     ```C++
     #include <iostream>
@@ -375,7 +378,7 @@ types like std::exception or derived classes, such as std::runtime_error.
     - **throw statement**: This signals that an exception has occurred. The throw keyword can pass any type of data (in this case, an integer 20).
     - **catch block**: It catches the exception. **The parameter inside the catch block must match the type of the thrown object** (in this case, int).
 
-2. **Example**
+2. **Example: Basic Exception Handling**
     ```C++
     #include <iostream>
     #include <stdexcept>  // For standard exceptions
@@ -405,9 +408,97 @@ types like std::exception or derived classes, such as std::runtime_error.
     ```
     - divide is a function that checks if the denominator (b) is zero. If it is, the function throws a std::runtime_error exception.
     - In main(), the try block contains the code that might throw an exception (divide(x, y)), and the catch block handles any exceptions that occur, printing an error message.
+    -  after the catch block is executed, the **program continues executing** normally unless explicitly terminated.
     - **std::runtime_error** is a specific type of exception provided by the C++ Standard Library. 
     It is used to represent runtime errors (like division by zero in your case).
     - The **& e** part means that e is a reference to the std::runtime_error object that was thrown. 
     This allows you to inspect the details of the exception (in this case, the error message).
     - The **what()** function is a member function of the std::runtime_error class (inherited from std::exception), 
     and it returns a C-style string (const char*) that describes the error. In this case, it returns the message "Division by zero!"
+
+3. **Example: additional code after the catch block**
+If the program has additional code after the catch block that uses the variable result, and the exception occurs, there are a few important considerations to keep in mind:
+- **Scope of result:** The variable result is declared inside the try block. 
+  If an exception is thrown before result is assigned a value (as in your case, 
+  due to division by zero), the assignment to result never happens. This means 
+  that result is not initialized if an exception is thrown, and the variable 
+  goes out of scope after the try-catch block.
+- Accessing result after the catch: If you try to use result after the catch block, 
+the compiler will not allow it because the variable result is local to the try block 
+and isn't accessible outside.
+- Solution - Declare result before the try block: If you want to use result after 
+the catch block, you need to declare result before the try block so it remains in scope. 
+However, you also need to ensure that result is initialized safely, because if an 
+exception occurs, result won't have a valid value.
+```C++
+#include <iostream>
+#include <stdexcept>  // For standard exceptions
+
+int divide(int a, int b) {
+    if (b == 0) {
+        throw std::runtime_error("Division by zero!");
+    }
+    return a / b;
+}
+
+int main() {
+    int x = 10, y = 0;
+    int result = 0;  // Declare result before the try block, initialize it to a safe value
+    
+    try {
+        result = divide(x, y);  // This might throw an exception
+        std::cout << "Result: " << result << std::endl;
+    } catch (const std::runtime_error& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+        result = -1;  // Optionally assign a default value when an error occurs
+    }
+
+    // After the catch block, result is still accessible
+    if (result != -1) {
+        std::cout << "The result is: " << result << std::endl;
+    } else {
+        std::cout << "The division failed." << std::endl;
+    }
+
+    return 0;
+}
+```
+
+## How Exception Handling Works
+When an exception is thrown, the normal flow of the program is interrupted, 
+and C++ starts looking for a matching catch block to handle that exception. 
+If it finds a suitable catch block, the exception is handled, and the program 
+continues from that point. If no catch block matches the exception, the program terminates.
+
+## Types of Exceptions
+You can throw and catch **any type of object** in C++: built-in types (like int, char, etc.) 
+or custom objects (instances of classes). It is common practice to throw exceptions 
+as objects of standard library exception classes, or user-defined classes, 
+to provide more information about the error.
+
+**Example of Throwing and Catching Different Types**
+```C++
+#include <iostream>
+
+int main() {
+    try {
+        throw std::string("An error occurred");
+    }
+    catch (int e) {
+        std::cout << "Caught an integer exception: " << e << std::endl;
+    }
+    catch (std::string &e) {
+        std::cout << "Caught a string exception: " << e << std::endl;
+    }
+
+    return 0;
+}
+```
+Here, a std::string exception is thrown, and the appropriate catch block that handles 
+std::string catches it.
+
+| Definizione:|
+|blb bla|
+||
+
+## 
