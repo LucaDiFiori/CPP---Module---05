@@ -497,10 +497,10 @@ int main() {
 Here, a std::string exception is thrown, and the appropriate catch block that handles 
 std::string catches it.
 
-<div style="border: 1px solid black; padding: 10px;">
+```
+Questo è un testo racchiuso in un blocco di codice.
+Non è esattamente una box, ma funziona.
+```
 
-Questo è un testo racchiuso in una box con bordi.
-
-</div>
 
 ## 
