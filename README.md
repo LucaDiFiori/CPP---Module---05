@@ -24,6 +24,9 @@ This module is designed to help you understand Try/Catch and Exceptions in CPP.
     - [Catching All Exceptions](#catching-all-exceptions)
     - [Rethrowing Exceptions](#Rethrowing-Exceptions)
     - [Custom Exception Classes](#custom-exception-classes)
+    - [noexcept Keyword (C++11 Only)](#noexcept-keyword-C++11-Only)
+    - [Stack Unwinding](#stack-unwinding)
+    - [Exception Handling Best Practices](#exception-handling-best-practices)
 
 ***
 
@@ -585,6 +588,19 @@ Here, the exception is caught in the function() and rethrown to be handled by th
         return 0;
     }
     ```
+    - **Inheritance**: MyException inherits from the standard std::exception class, 
+      which is the base class for all exceptions in the C++ Standard Library.
+    - **what() function**: The what() function is a virtual function inherited 
+      from std::exception. It returns a const char*, allowing the exception to 
+      provide a description of the error. In this case, it returns a fixed string 
+      ("Custom Exception Occurred!").
+    - **Standard Conformance**: This class leverages the existing exception-handling 
+      mechanism of C++ (std::exception), which makes it more standard-conforming 
+      and compatible with other standard exception-handling features. 
+      You can catch this exception using catch (std::exception&), making it more versatile.
+    - **Performance**: Since it only returns a fixed string, there's no dynamic 
+      memory allocation or complex logic involved. It's generally faster and 
+      simpler to use for basic exceptions.
 
 2. **Custom**
     You can throw and catch exceptions as objects of custom classes. 
@@ -614,5 +630,106 @@ Here, the exception is caught in the function() and rethrown to be handled by th
         return 0;
     }
     ```
-    In this example, a custom exception class MyException is created to handle specific errors. 
-    It stores an error message, which is accessed via the getMessage() method.
+    - **No Inheritance**: MyException does not inherit from std::exception. 
+      This means it doesn't integrate with the standard C++ exception hierarchy, 
+      so you can't catch it using catch (std::exception&).
+    - **Custom Member Variable**: The class has a std::string member (errorMessage), 
+      which allows it to hold a custom error message passed during construction.
+    - **Flexibility in Error Message**: The exception message is not hardcoded but passed 
+      dynamically when an object of MyException is thrown. This allows for more 
+      flexibility compared to the first example where the message is fixed.
+
+## noexcept Keyword (C++11 Only)
+The **noexcept** keyword is used to specify that **a function does not throw any exceptions**. 
+If an exception is thrown inside a noexcept function, the program will call **std::terminate()**.
+- **Declaring Non-Throwing Functions**: When a function is marked with noexcept, it tells 
+the compiler and the programmer that this function will not throw any exceptions. 
+This can help the compiler optimize code because it doesn't need to generate code 
+to handle potential exceptions.
+- **Exception Safety**: When you use noexcept, you're promising that no exceptions 
+will escape from that function. **If an exception is thrown, the program will terminate**, 
+rather than propagate the exception.
+
+1. **Syntax**
+You can use noexcept in two ways:
+- **Unconditionally**: The function will never throw an exception.
+    ```C++
+        void myFunction() noexcept 
+        {
+        // Function logic
+    }
+    ```
+
+- **Conditionally**: The noexcept can be used with a condition, which will evaluate 
+at compile time to decide if the function is noexcept or not.
+    ```C++
+    void myFunction() noexcept(condition) {
+        // Function logic
+    }
+    ```
+
+2. **Usage**
+- You typically use noexcept on functions that are expected to be safe, i.e., they don’t throw exceptions (like utility functions, destructors, move constructors, and move assignment operators).
+- For example, marking move constructors as noexcept is important because the Standard 
+  Template Library (STL) can rely on it to make optimizations during container operations 
+  like std::vector::resize.
+
+3. **Implications**
+- **Performance**: If the compiler knows that a function is noexcept, it can generate 
+more efficient code because it doesn't need to account for the possibility of 
+exceptions being thrown.
+- **Termination on Exception**: If a function marked noexcept actually throws an exception, 
+the program will call std::terminate(), causing the program to immediately terminate 
+rather than propagate the exception.
+- **Conditional noexcept**: You can make noexcept dependent on certain conditions. 
+For example, a function might be noexcept only if certain operations performed 
+within it are also noexcept.
+
+## Stack Unwinding
+When an exception is thrown, C++ begins a process called stack unwinding, where 
+it destroys all local objects in the reverse order of their creation until it finds 
+a matching catch block.
+```C++
+#include <iostream>
+
+class Test {
+public:
+    Test() {
+        std::cout << "Constructor called" << std::endl;
+    }
+    ~Test() {
+        std::cout << "Destructor called" << std::endl;
+    }
+};
+
+int main() {
+    try {
+        Test obj;
+        throw 100;
+    }
+    catch (int e) {
+        std::cout << "Caught exception: " << e << std::endl;
+    }
+
+    return 0;
+}
+```
+In this example, when an exception is thrown, the destructor of the Test object 
+is called as part of the stack unwinding process.
+
+## Exception Handling Best Practices
+- **Throw by value, catch by reference**: Always throw exception objects by value and 
+catch them by reference to avoid slicing and performance issues.
+    ```C++
+    try {
+        throw std::runtime_error("Error");
+    } catch (const std::runtime_error& e) {
+        std::cerr << e.what() << std::endl;
+    }
+    ```
+- **Use standard exceptions**: Prefer using standard exceptions (std::runtime_error, 
+std::invalid_argument, etc.) when possible to keep your code consistent and more readable.
+- **Avoid throwing exceptions in destructors**: Throwing exceptions from a destructor 
+can cause undefined behavior, especially if an exception is already active.
+- **Only use exceptions for exceptional cases**: Exceptions should not be used for regular °
+control flow, but rather for handling errors and unexpected events.
