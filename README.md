@@ -561,58 +561,58 @@ Here, the exception is caught in the function() and rethrown to be handled by th
 
 ## Custom Exception Classes
 1. **inheriting from std::exception**
-You can create your own exception classes by inheriting from std::exception 
-or other standard exception types.
-```C++
-#include <iostream>
-#include <exception>
+    You can create your own exception classes by inheriting from std::exception 
+    or other standard exception types.
+    ```C++
+    #include <iostream>
+    #include <exception>
 
-class MyException : public std::exception {
-public:
-    const char* what() const throw() 
-    {
-        return "Custom Exception Occurred!";
-    }
-};
+    class MyException : public std::exception {
+    public:
+        const char* what() const throw() 
+        {
+            return "Custom Exception Occurred!";
+        }
+    };
 
-int main() {
-    try {
-        throw MyException();
-    } catch (const MyException& e) {
-        std::cerr << e.what() << std::endl;
+    int main() {
+        try {
+            throw MyException();
+        } catch (const MyException& e) {
+            std::cerr << e.what() << std::endl;
+        }
+        
+        return 0;
     }
-    
-    return 0;
-}
-```
+    ```
 
 2. **Custom**
-You can throw and catch exceptions as objects of custom classes. 
-This allows you to encapsulate detailed error information.
-```C++
-#include <iostream>
+    You can throw and catch exceptions as objects of custom classes. 
+    This allows you to encapsulate detailed error information.
+    ```C++
+    #include <iostream>
 
-class MyException {
-private:
-    std::string errorMessage;
-public:
-    MyException(const std::string& message) : errorMessage(message) {}
-    
-    std::string getMessage() const {
-        return errorMessage;
-    }
-};
+    class MyException {
+    private:
+        std::string errorMessage;
+    public:
+        MyException(const std::string& message) : errorMessage(message) {}
+        
+        std::string getMessage() const {
+            return errorMessage;
+        }
+    };
 
-int main() {
-    try {
-        throw MyException("Custom exception occurred");
-    }
-    catch (const MyException& e) {
-        std::cout << "Caught custom exception: " << e.getMessage() << std::endl;
-    }
+    int main() {
+        try {
+            throw MyException("Custom exception occurred");
+        }
+        catch (const MyException& e) {
+            std::cout << "Caught custom exception: " << e.getMessage() << std::endl;
+        }
 
-    return 0;
-}
-```
-In this example, a custom exception class MyException is created to handle specific errors. 
-It stores an error message, which is accessed via the getMessage() method.
+        return 0;
+    }
+    ```
+    In this example, a custom exception class MyException is created to handle specific errors. 
+    It stores an error message, which is accessed via the getMessage() method.
