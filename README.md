@@ -2,6 +2,11 @@
 This module is designed to help you understand Try/Catch and Exceptions in CPP.
 
 ***
+# Sources
+- https://cplusplus.com/doc/tutorial/exceptions/
+- https://cplusplus.com/doc/tutorial/exceptions/
+
+***
 # Table of contents
 - [NESTED CLASSES](#nested-classes)
     - [Definition of Nested Classes](#definition-of-nested-classes)
@@ -24,7 +29,7 @@ This module is designed to help you understand Try/Catch and Exceptions in CPP.
     - [Catching All Exceptions](#catching-all-exceptions)
     - [Rethrowing Exceptions](#Rethrowing-Exceptions)
     - [Custom Exception Classes](#custom-exception-classes)
-    - [noexcept Keyword (C++11 Only)](#noexcept-keyword-C++11-Only)
+    - [C++98 throw() Specification](#c++98-throw()-Specification)
     - [Stack Unwinding](#stack-unwinding)
     - [Exception Handling Best Practices](#exception-handling-best-practices)
 
@@ -340,6 +345,7 @@ C++ uses three primary keywords for exception handling:
 - **throw**: 
     * When an error occurs, you can "throw" an exception to signal that something went wrong. This is done using the throw keyword.
     * This keyword is used to signal that an exception has occurred.
+    * The throw keyword implies that the exception will be **propagated** (typically to a catch block), and the execution of the program may continue if the exception is handled properly.
 - **try**: 
     * When an exception is thrown, you can "catch" it and handle it using a try-catch block. The try block contains the code that may throw an exception, and the catch block contains the code that handles the exception.
     * This block contains the code that might throw an exception.
@@ -639,51 +645,26 @@ Here, the exception is caught in the function() and rethrown to be handled by th
       dynamically when an object of MyException is thrown. This allows for more 
       flexibility compared to the first example where the message is fixed.
 
-## noexcept Keyword (C++11 Only)
-The **noexcept** keyword is used to specify that **a function does not throw any exceptions**. 
-If an exception is thrown inside a noexcept function, the program will call **std::terminate()**.
-- **Declaring Non-Throwing Functions**: When a function is marked with noexcept, it tells 
-the compiler and the programmer that this function will not throw any exceptions. 
-This can help the compiler optimize code because it doesn't need to generate code 
-to handle potential exceptions.
-- **Exception Safety**: When you use noexcept, you're promising that no exceptions 
-will escape from that function. **If an exception is thrown, the program will terminate**, 
-rather than propagate the exception.
+## C++98 throw() Specification
+In C++98, the **throw() specifier** is used to indicate that a function does not throw any exceptions (guarantee that the method cannot propagate any further exceptions). If an exception is thrown inside a function marked with throw(), the program will call std::unexpected(), which typically leads to std::terminate(), causing the program to terminate.
+- **Declaring Non-Throwing Functions**: When a function is marked with throw(), it informs the compiler and the programmer that the function is not supposed to throw exceptions. This can help optimize the code since the compiler does not need to handle exceptions in these functions.
+- **Exception Safety**: Using throw() signals that no exceptions should be thrown from the function. **If an exception is thrown, the program will terminate**, rather than propagate the exception.
 
 1. **Syntax**
-You can use noexcept in two ways:
-- **Unconditionally**: The function will never throw an exception.
-    ```C++
-        void myFunction() noexcept 
-        {
-        // Function logic
-    }
-    ```
-
-- **Conditionally**: The noexcept can be used with a condition, which will evaluate 
-at compile time to decide if the function is noexcept or not.
-    ```C++
-    void myFunction() noexcept(condition) {
-        // Function logic
-    }
-    ```
+You can use throw() to specify that a function won’t throw exceptions:
+```C++
+void myFunction() throw() {
+    // Function logic
+}
+```
 
 2. **Usage**
-- You typically use noexcept on functions that are expected to be safe, i.e., they don’t throw exceptions (like utility functions, destructors, move constructors, and move assignment operators).
-- For example, marking move constructors as noexcept is important because the Standard 
-  Template Library (STL) can rely on it to make optimizations during container operations 
-  like std::vector::resize.
+- You typically use throw() for functions that are not expected to throw exceptions, such as destructors, simple utility functions, and performance-critical operations where exception handling overhead is unnecessary.
+- Functions like destructors and move operations (though not part of C++98) are often considered good candidates for the throw() specifier if they are guaranteed not to throw.
 
 3. **Implications**
-- **Performance**: If the compiler knows that a function is noexcept, it can generate 
-more efficient code because it doesn't need to account for the possibility of 
-exceptions being thrown.
-- **Termination on Exception**: If a function marked noexcept actually throws an exception, 
-the program will call std::terminate(), causing the program to immediately terminate 
-rather than propagate the exception.
-- **Conditional noexcept**: You can make noexcept dependent on certain conditions. 
-For example, a function might be noexcept only if certain operations performed 
-within it are also noexcept.
+- **Performance**: Declaring functions with throw() allows the compiler to generate more efficient code because it doesn't need to account for exceptions. However, be cautious, as marking a function with throw() makes it critical that no exceptions are thrown from that function.
+- **Termination on Exception**: If a function marked with throw() does throw an exception, the program will invoke std::unexpected(), leading to termination. This differs from functions without the throw() specifier, which would propagate the exception.
 
 ## Stack Unwinding
 When an exception is thrown, C++ begins a process called stack unwinding, where 
