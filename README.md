@@ -431,7 +431,7 @@ Note: I use a reference to exception (exception& e). In practice, you can think 
         class PEBKACException : public std::exception
         {
             public:
-                // throw() is an "exception specification" (at the end is used to declare that the function (what()) would not throw any exceptions
+                // note*
                 virtual const char*     what() const throw()
                 {
                     return ("Problem exist between keyboard and chari")
