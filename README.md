@@ -368,6 +368,30 @@ types like std::exception or derived classes, such as std::runtime_error.
         // Code to handle the exception
     }
     ```
+3. **general use case**
+    ```C++
+    #include <stdexcept>
+
+    void test1()
+    {
+        try
+        {
+            //Do some stuff here
+            if (/*there's an error*/)
+            {
+                throw std::exception();
+            }
+            else
+            {
+                //Do some more stuff
+            }
+        }
+        catch (std::exception e)
+        {
+            //Handle the error (e.g. deallocation if needed etc.)
+        }
+    }
+    ```
 
 ## Examples
 1. **Example**
