@@ -29,7 +29,7 @@ This module is designed to help you understand Try/Catch and Exceptions in CPP.
     - [Catching All Exceptions](#catching-all-exceptions)
     - [Rethrowing Exceptions](#Rethrowing-Exceptions)
     - [Custom Exception Classes](#custom-exception-classes)
-    - [C++98 throw() Specification](#c++98-throw()-Specification)
+    - [exception specification](#exception-specification)
     - [Stack Unwinding](#stack-unwinding)
     - [Exception Handling Best Practices](#exception-handling-best-practices)
 
@@ -368,7 +368,7 @@ types like std::exception or derived classes, such as std::runtime_error.
         // Code to handle the exception
     }
     ```
-3. **general use case**
+3. **general use case_1**
     ```C++
     #include <stdexcept>
 
@@ -392,6 +392,69 @@ types like std::exception or derived classes, such as std::runtime_error.
         }
     }
     ```
+
+4. **general use case_2**
+    ```C++
+    #include <stdexcept>
+
+    void test2()
+    {
+        //Do some stuff here
+        if (/*there's an error*/)
+        {
+            throw std::exception();
+        }
+        else
+        {
+            //Do some more stuff
+        }
+    }
+
+    void test3()
+    {
+        try
+        {
+            test2();
+        }
+        catch (std::exception& e)
+        {
+            //Handle error
+        }
+    }
+    ```
+Note: I use a reference to exception (exception& e). In practice, you can think of the catch block as a function that takes an exception as a parameter, with this parameter being initialized by the exception that is caught. (While it's not actually a function, thinking of it this way can make it easier to understand.)
+
+5. **Defining a new exception**
+    ```C++
+    void test4()
+    {
+        class PEBKACException : public std::exception
+        {
+            public:
+                // throw() is an "exception specification" (at the end is used to declare that the function (what()) would not throw any exceptions
+                virtual const char*     what() const throw()
+                {
+                    return ("Problem exist between keyboard and chari")
+                }
+        };
+
+        try
+        {
+            test3();
+        }
+        catch (PEBKACException& e)
+        {
+            //Handle the fact that the user is an idiot
+        }
+        catch (std::exception& e)
+        {
+            //Handle other exceptions that are like std::exception
+        }
+    }
+    ```
+Note: throw() at the end of "virtual const char*     what() const throw()" is an
+[exception specification](#exception-specification).
+with empty parentheses, indicating that the function (what() in this case) will not throw any exceptions.
 
 ## Examples
 1. **Example**
@@ -669,26 +732,62 @@ Here, the exception is caught in the function() and rethrown to be handled by th
       dynamically when an object of MyException is thrown. This allows for more 
       flexibility compared to the first example where the message is fixed.
 
-## C++98 throw() Specification
-In C++98, the **throw() specifier** is used to indicate that a function does not throw any exceptions (guarantee that the method cannot propagate any further exceptions). If an exception is thrown inside a function marked with throw(), the program will call std::unexpected(), which typically leads to std::terminate(), causing the program to terminate.
+
+## Exception Specification
+In C++98, **exception specifications** allow you to **declare which exceptions a function might throw**. This is done using dynamic exception specifications with the throw keyword, followed by a list of exception types.
+
+### Dynamic Exception Specification in C++98
+A **dynamic exception specification** in C++98 specifies the types of exceptions a function might throw, helping users understand what to expect from a function’s behavior. The **syntax** for dynamic exception specifications uses throw with a list of exception types in parentheses:
+```C++
+void myFunction() throw(int, std::runtime_error);
+```
+
+In this example:
+- myFunction promises that it will only throw exceptions of type **int** or **std::runtime_error**.
+- If it throws an exception of a different type, the std::unexpected function is called, which by default will call std::terminate, ending the program.
+
+**Example of Exception Specification in C++98**
+```C++
+#include <iostream>
+#include <stdexcept>
+
+void riskyFunction() throw(std::runtime_error) {
+    throw std::runtime_error("Runtime error occurred");
+}
+
+int main() {
+    try {
+        riskyFunction();
+    } catch (const std::exception& e) {
+        std::cout << "Caught exception: " << e.what() << std::endl;
+    }
+    return 0;
+}
+```
+
+### throw() Specification
+the **throw() specifier** (with no parameters) is used to indicate that a function does not throw any exceptions (guarantee that the method cannot propagate any further exceptions). If an exception is thrown inside a function marked with throw(), the program will call std::unexpected(), which typically leads to std::terminate(), causing the program to terminate.
+
 - **Declaring Non-Throwing Functions**: When a function is marked with throw(), it informs the compiler and the programmer that the function is not supposed to throw exceptions. This can help optimize the code since the compiler does not need to handle exceptions in these functions.
 - **Exception Safety**: Using throw() signals that no exceptions should be thrown from the function. **If an exception is thrown, the program will terminate**, rather than propagate the exception.
 
-1. **Syntax**
-You can use throw() to specify that a function won’t throw exceptions:
 ```C++
-void myFunction() throw() {
+void myFunction() throw() { // Indicates no exceptions will be thrown
     // Function logic
 }
 ```
 
-2. **Usage**
-- You typically use throw() for functions that are not expected to throw exceptions, such as destructors, simple utility functions, and performance-critical operations where exception handling overhead is unnecessary.
-- Functions like destructors and move operations (though not part of C++98) are often considered good candidates for the throw() specifier if they are guaranteed not to throw.
-
-3. **Implications**
+**Implications**
 - **Performance**: Declaring functions with throw() allows the compiler to generate more efficient code because it doesn't need to account for exceptions. However, be cautious, as marking a function with throw() makes it critical that no exceptions are thrown from that function.
 - **Termination on Exception**: If a function marked with throw() does throw an exception, the program will invoke std::unexpected(), leading to termination. This differs from functions without the throw() specifier, which would propagate the exception.
+
+### Limitations of Dynamic Exception Specifications
+- **Not Type-Safe**: Dynamic exception specifications allow functions to specify certain types, but they don’t enforce strict safety at runtime. If the wrong type is thrown, the program will be terminated.
+- **Performance Cost**: Compilers must verify that exceptions conform to the specification, which can lead to additional overhead.
+- **Deprecation in Modern Standards**: Due to these limitations, dynamic exception specifications were deprecated in C++11 and fully removed in C++17.
+
+
+
 
 ## Stack Unwinding
 When an exception is thrown, C++ begins a process called stack unwinding, where 
@@ -721,6 +820,8 @@ int main() {
 ```
 In this example, when an exception is thrown, the destructor of the Test object 
 is called as part of the stack unwinding process.
+
+
 
 ## Exception Handling Best Practices
 - **Throw by value, catch by reference**: Always throw exception objects by value and 
