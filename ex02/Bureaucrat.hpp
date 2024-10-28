@@ -16,14 +16,14 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
-#include "Form.hpp"
+#include "AForm.hpp"
 
 
 class Bureaucrat
 {
 	private:
-		const std::string	_name;
-		int 				_grade;
+		const std::string   _name;
+		int                 _grade;
 
 		Bureaucrat();
 
