@@ -28,19 +28,24 @@ class Bureaucrat
 		Bureaucrat();
 
 	public:
+	    //Canonical form________________________________________________________
 		Bureaucrat(std::string name, int grade);
 		Bureaucrat(const Bureaucrat& src);
 		Bureaucrat& operator=(const Bureaucrat& src);
 		~Bureaucrat();
 
-		void			promotion();
-		void			demotion();
-		void			signForm(Form& form);
 
-		std::string		getName() const;
-		int				getGrade() const;
+		//methods_______________________________________________________________
+		void            promotion();
+		void            demotion();
+		void            signForm(AForm& form);
+		void            executeForm(const AForm& form); //Add a function called executeForm to the Bureaucrat class.
 
+		//getters_______________________________________________________________
+		std::string     getName() const;
+		int             getGrade() const;
 
+		//exceptions____________________________________________________________
 		class GradeTooHighException : public std::exception
 		{
 			public:

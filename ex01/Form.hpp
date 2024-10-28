@@ -34,10 +34,10 @@ class Bureaucrat;
 class Form
 {
 	private:
-		const std::string	_name;
-		bool				_signed;
-		const int			_gradeToSign;
-		const int			_gradeToExec;
+		const std::string   _name;
+		bool                _signed;
+		const int           _gradeToSign;
+		const int           _gradeToExec;
 
 		Form();
 
@@ -48,14 +48,14 @@ class Form
 
 		Form& operator=(const Form& src);
 
-		void				beSigned(Bureaucrat& Bureau);
+		void                beSigned(Bureaucrat& Bureau);
 
 
-		std::string			getName() const;
-		bool				getSigned() const;
-		void				setSigned(bool status);
-		int					getGradeToSign() const;
-		int					getGradeToExec() const;
+		std::string         getName() const;
+		bool                getSigned() const;
+		void                setSigned(bool status);
+		int                 getGradeToSign() const;
+		int                 getGradeToExec() const;
 
 
 		class GradeTooHighException : public std::exception

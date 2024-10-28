@@ -11,6 +11,7 @@ $(NAME): $(OBJS)
 
 clean:
 	rm -f $(OBJS)
+	rm home_shrubbery
 
 fclean: clean
 	rm -f $(NAME)

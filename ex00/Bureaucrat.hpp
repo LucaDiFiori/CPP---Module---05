@@ -30,8 +30,8 @@
 class Bureaucrat
 {
 	private:
-		const std::string	_name;
-		int 				_grade;
+		const std::string   _name;
+		int                 _grade;
 
 		Bureaucrat();
 
@@ -41,11 +41,11 @@ class Bureaucrat
 		Bureaucrat& operator=(const Bureaucrat& src);
 		~Bureaucrat();
 
-		void	promotion();
-		void	demotion();
+		void    promotion();
+		void    demotion();
 
-		std::string		getName() const;
-		int				getGrade() const;
+		std::string    getName() const;
+		int            getGrade() const;
 
 		/*
 		* what() const throw()

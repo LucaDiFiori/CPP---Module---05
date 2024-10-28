@@ -31,15 +31,15 @@
  
 class Bureaucrat;
 
-class Form
+class AForm
 {
 	private:
-		const std::string	_name;
-		bool				_signed;
-		const int			_gradeToSign;
-		const int			_gradeToExec;
+		const std::string   _name;
+		bool                _signed;
+		const int           _gradeToSign;
+		const int           _gradeToExec;
 
-		Form();
+		AForm();
 
 
 
@@ -51,29 +51,29 @@ class Form
 
 
 	public:
-		//Canonical form_________________________________________________________
-		Form(std::string name, int gradeToSign, int gradeToExec);
-		Form(const Form& src);
-		virtual ~Form();  //Add a virtual destructor to the Form class.
+		//Canonical form________________________________________________________
+		AForm(std::string name, int gradeToSign, int gradeToExec);
+		AForm(const AForm& src);
+		virtual ~AForm();  //Add a virtual destructor to the Form class.
 
-		Form& operator=(const Form& src);
+		AForm& operator=(const AForm& src);
 
 		//Methods_______________________________________________________________
-		void	beSigned(Bureaucrat& Bureau);
+		void    beSigned(Bureaucrat& Bureau);
 		// Add a new member function called execute. This function will check if the 
 		//form is signed and if the bureaucrat's grade is high enough to execute the form. 
 		//If both conditions are met, the form will call the performAction function 
 		//(which will be implemented by the derived classes).
-		void	execute(const Bureaucrat & executor) const;
+		void    execute(const Bureaucrat& executor) const;
 
 
 
 		//Getters & setters_____________________________________________________
-		std::string			getName() const;
-		bool				getSigned() const;
-		void				setSigned(bool status);
-		int					getGradeToSign() const;
-		int					getGradeToExec() const;
+		std::string         getName() const;
+		bool                getSigned() const;
+		void                setSigned(bool status);
+		int                 getGradeToSign() const;
+		int                 getGradeToExec() const;
 
 
 		//Exceptions____________________________________________________________
@@ -97,7 +97,7 @@ class Form
 		};
 };
 
-std::ostream& operator<<(std::ostream& os, const Form& src);
+std::ostream& operator<<(std::ostream& os, const AForm& src);
 
 
 

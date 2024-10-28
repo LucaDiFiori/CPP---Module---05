@@ -12,7 +12,7 @@
 
 #include "Bureaucrat.hpp"
 
-//Canonical form________________________________________________________________
+//Canonical AForm________________________________________________________________
 Bureaucrat::Bureaucrat(std::string name, int grade) : _name(name), _grade(grade)
 {
 	if (grade < 1)
@@ -46,6 +46,10 @@ Bureaucrat::~Bureaucrat()
 }
 
 
+
+
+
+
 //Methods_______________________________________________________________________
 void Bureaucrat::promotion()
 {
@@ -68,43 +72,86 @@ void Bureaucrat::demotion()
 }
 
 
-
-/**
- * @brief Attempts to sign a form.
- *
- * This method checks if the form is already signed. If it is, it prints a message
- * indicating that the form is already signed and returns. If the form is not signed,
- * it attempts to sign the form. If the signing is successful, it prints a message
- * indicating that the bureaucrat has signed the form. If a GradeTooHighException is
- * thrown during the signing process, it catches the exception, prints the exception
- * message, and prints an additional message indicating that the form cannot be signed
- * by the bureaucrat.
- *
- * @param form The form to be signed.
- * 
- * @throws Form::GradeTooHighException If the bureaucrat's grade is too high to sign the form.
- */
-void Bureaucrat::signForm(Form& form)
+void Bureaucrat::signForm(AForm& AForm)
 {
-	if (form.getSigned())
+	if (AForm.getSigned())
 	{
-		std::cout << RED << "Form " << form.getName() << " is already signed" << RESET << std::endl;
+		std::cout << RED << "AForm " << AForm.getName() << " is already signed" 
+			<< RESET << std::endl;
 		return ;
 	}
 
 	try
 	{
-		form.beSigned(*this);
+		AForm.beSigned(*this);
+		
 		std::cout << CYAN << "Bureaucrat " << Bureaucrat::getName() << " signs " 
-			<< form.getName() << RESET << std::endl;
+			<< AForm.getName() << RESET << std::endl;
 	}
-	catch (Form::GradeTooHighException& e)
+	catch (AForm::GradeTooHighException& e)
 	{
-		std::cout << RED << e.what() << RESET << std::endl;
-		std::cout << RED << "Form " << form.getName() << " cannot be signed by " 
+		std::cout << e.what() << std::endl;
+		std::cout << RED << "AForm " << AForm.getName() << " cannot be signed by " 
 			<< Bureaucrat::getName() << RESET << std::endl;
 	}
 }
+
+/**
+ * @brief Attempts to execute a AForm.
+ *
+ * This method attempts to execute the given AForm using the current Bureaucrat.
+ * If the execution is successful, it prints a message indicating that the Bureaucrat
+ * has executed the AForm. If a GradeTooLowException is thrown during the execution process,
+ * it catches the exception, prints the exception message, and prints an additional message
+ * indicating that the AForm cannot be executed by the Bureaucrat. If a AFormNotSignedException
+ * is thrown, it catches the exception, prints the exception message, and prints an additional
+ * message indicating that the AForm is not valid for execution.
+ *
+ * @param AForm The AForm to be executed.
+ * 
+ * @throws AForm::GradeTooLowException If the Bureaucrat's grade is too low to execute the AForm.
+ * @throws AForm::AFormNotSignedException If the AForm has not been signed and thus cannot be executed.
+ *
+ *
+ *
+ * @note If I don’t want to catch the exceptions thrown by the AForm::execute() method,
+ * I can remove the try-catch block and let the exceptions propagate to the caller 
+ * (in this case, the main function), like so:
+ * 
+ * void Bureaucrat::executeForm(const AForm& AForm) {
+ *     AForm.execute(*this);
+ *     std::cout << CYAN << "Bureaucrat " << this->getName() << " executes " 
+ *               << AForm.getName() << RESET << std::endl;
+ * }
+ * 
+ * Then I can catch the exceptions in the main function.
+ */
+void Bureaucrat::executeForm(const AForm& AForm)
+{
+	try
+	{
+		AForm.execute(*this);
+		
+		std::cout << CYAN << "Bureaucrat " << this->getName() << " executes " 
+			<< AForm.getName() << RESET << std::endl;
+	}
+	catch (AForm::GradeTooLowException& e)
+	{
+		std::cout << YELLOW << "AForm " << AForm.getName() << " cannot be executed by " 
+			<< this->getName() << RESET << std::endl;
+		std::cout << e.what() << std::endl;
+		throw (e);
+	}
+	catch (AForm::FormNotSignedException& e)
+	{
+		std::cout << YELLOW << "AForm: " << AForm.getName() << "not valid" << RESET << std::endl;
+		std::cout << e.what() << std::endl;
+	}
+	
+}
+
+
+
 
 
 
@@ -120,6 +167,9 @@ int		Bureaucrat::getGrade() const
 }
 
 
+
+
+
 //Exceptions____________________________________________________________________
 const char*		Bureaucrat::GradeTooHighException::what() const throw()
 {
@@ -130,6 +180,9 @@ const char* 	Bureaucrat::GradeTooLowException::what() const throw()
 {
 	return ("Bureaucrat_Error:" RED " Grade too low" RESET);
 }
+
+
+
 
 
 
